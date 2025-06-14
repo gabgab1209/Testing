@@ -2,41 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mini Game Hub</title>
   <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="game-container">
+  <main class="hub">
+    <h1>🎮 Mini Game Hub</h1>
     <nav>
-      <button onclick="showGame('chess')">Chess</button>
-      <button onclick="showGame('tetris')">Tetris</button>
-      <button onclick="showGame('minesweeper')">Minesweeper</button>
+      <button onclick="showGame('chess')">♟ Chess</button>
+      <button onclick="showGame('tetris')">⬛ Tetris</button>
+      <button onclick="showGame('minesweeper')">💣 Minesweeper</button>
+      <button onclick="showGame('flappy')">🐤 Flappy Bird</button>
+      <button onclick="showGame('snake')">🐍 Snake</button>
+      <button onclick="showGame('game2048')">🔢 2048</button>
     </nav>
-    <div id="chess" class="game">
+
+    <!-- Chess -->
+    <section id="chess" class="game">
       <h2>Chess</h2>
+      <select id="chessMode" onchange="initChess()">
+        <option value="pvp">PvP</option>
+        <option value="ai-white">You vs AI (White)</option>
+        <option value="ai-black">You vs AI (Black)</option>
+      </select>
       <div id="chessBoard" class="grid-8x8"></div>
+      <button onclick="restartChess()">🔄 Restart</button>
       <p id="chessStatus"></p>
-    </div>
-    <div id="tetris" class="game">
+
+    </section>
+
+    <!-- Tetris -->
+    <section id="tetris" class="game">
       <h2>Tetris</h2>
       <canvas id="tetrisCanvas" width="200" height="400"></canvas>
       <div class="tetris-controls">
-        <button onclick="moveLeft()">◀️</button>
+        <button onclick="moveLeft()">⬅️</button>
         <button onclick="rotate()">🔄</button>
-        <button onclick="moveRight()">▶️</button>
+        <button onclick="moveRight()">➡️</button>
         <button onclick="softDrop()">⬇️</button>
         <button onclick="hardDrop()">⏬</button>
       </div>
       <p>Score: <span id="tetrisScore">0</span></p>
-      <p id="tetrisGameOver" style="color: red;"></p>
-    </div>
-    <div id="minesweeper" class="game">
+      <p id="tetrisGameOver" class="error"></p>
+    </section>
+
+    <!-- Minesweeper -->
+    <section id="minesweeper" class="game">
       <h2>Minesweeper</h2>
       <div id="minesweeperBoard" class="grid-8x8"></div>
       <p id="minesweeperStatus"></p>
+    </section>
+
+    <!-- Flappy Bird -->
+    <section id="flappy" class="game">
+      <h2>🐦 Flappy Bird</h2>
+      <canvas id="flappyCanvas" width="240" height="400"></canvas>
+      <p>Score: <span id="flappyScore">0</span></p>
+    </section>
+    <!-- Snake -->
+    <section id="snake" class="game">
+   <h2>🐍 Snake</h2>
+   <canvas id="snakeCanvas" width="240" height="240"></canvas>
+   <div class="snake-controls">
+   <button onclick="setSnakeDir(0, -1)">⬆️</button>
+   <div>
+    <button onclick="setSnakeDir(-1, 0)">⬅️</button>
+    <button onclick="setSnakeDir(1, 0)">➡️</button>
     </div>
-  </div>
+    <button onclick="setSnakeDir(0, 1)">⬇️</button>
+    </div>
+   <p>Score: <span id="snakeScore">0</span></p>
+    </section>
+    <!-- 2048 -->
+    <section id="game2048" class="game">
+  <h2>🔢 2048</h2>
+  <div id="grid2048" class="grid-4x4"></div>
+  <p>Score: <span id="score2048">0</span></p>
+  </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <script src="games.js"></script>
 </body>
 </html>
