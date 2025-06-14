@@ -337,11 +337,11 @@ function initSnake() {
 }
 
 function snakeKeyControl(e) {
-  const k = e.key;
-  if (k === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
-  if (k === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
-  if (k === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
-  if (k === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
+  const k = e.key.toLowerCase();
+  if (k === 'w' && dy === 0) { dx = 0; dy = -1; }
+  if (k === 's' && dy === 0) { dx = 0; dy = 1; }
+  if (k === 'a' && dx === 0) { dx = -1; dy = 0; }
+  if (k === 'd' && dx === 0) { dx = 1; dy = 0; }
 }
 function setSnakeDir(x, y) {
   if ((x && dx === 0) || (y && dy === 0)) {
@@ -427,32 +427,53 @@ function draw2048() {
 }
 
 function handle2048Key(e) {
-  const dir = { ArrowLeft: [0, -1], ArrowRight: [0, 1], ArrowUp: [-1, 0], ArrowDown: [1, 0] }[e.key];
-  if (!dir) return;
-
+  const key = e.key.toLowerCase();
+  const clone = board2048.map(row => [...row]);
   let moved = false;
-  let combined = Array(4).fill().map(() => Array(4).fill(false));
 
-  for (let _ = 0; _ < 4; _++) {
-    for (let y = (dir[0] === 1 ? 2 : 1); y >= 0 && y < 4; y += dir[0] || 1) {
-      for (let x = (dir[1] === 1 ? 2 : 1); x >= 0 && x < 4; x += dir[1] || 1) {
-        const ny = y + dir[0], nx = x + dir[1];
-        if (ny < 0 || ny >= 4 || nx < 0 || nx >= 4) continue;
-        if (board2048[ny][nx] === 0 && board2048[y][x]) {
-          board2048[ny][nx] = board2048[y][x];
-          board2048[y][x] = 0;
-          moved = true;
-        } else if (
-          board2048[ny][nx] === board2048[y][x] &&
-          board2048[y][x] !== 0 &&
-          !combined[ny][nx]
-        ) {
-          board2048[ny][nx] *= 2;
-          board2048[y][x] = 0;
-          score2048 += board2048[ny][nx];
-          combined[ny][nx] = true;
-          moved = true;
-        }
+  const move = (row) => {
+    let arr = row.filter(v => v);
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i] === arr[i + 1]) {
+        arr[i] *= 2;
+        score2048 += arr[i];
+        arr[i + 1] = 0;
+      }
+    }
+    arr = arr.filter(v => v);
+    while (arr.length < 4) arr.push(0);
+    return arr;
+  };
+
+  if (['a', 'arrowleft'].includes(key)) {
+    for (let y = 0; y < 4; y++) {
+      const newRow = move(board2048[y]);
+      if (!moved && newRow.toString() !== board2048[y].toString()) moved = true;
+      board2048[y] = newRow;
+    }
+  } else if (['d', 'arrowright'].includes(key)) {
+    for (let y = 0; y < 4; y++) {
+      const reversed = board2048[y].slice().reverse();
+      const newRow = move(reversed).reverse();
+      if (!moved && newRow.toString() !== board2048[y].toString()) moved = true;
+      board2048[y] = newRow;
+    }
+  } else if (['w', 'arrowup'].includes(key)) {
+    for (let x = 0; x < 4; x++) {
+      const col = board2048.map(row => row[x]);
+      const newCol = move(col);
+      for (let y = 0; y < 4; y++) {
+        if (board2048[y][x] !== newCol[y]) moved = true;
+        board2048[y][x] = newCol[y];
+      }
+    }
+  } else if (['s', 'arrowdown'].includes(key)) {
+    for (let x = 0; x < 4; x++) {
+      const col = board2048.map(row => row[x]).reverse();
+      const newCol = move(col).reverse();
+      for (let y = 0; y < 4; y++) {
+        if (board2048[y][x] !== newCol[y]) moved = true;
+        board2048[y][x] = newCol[y];
       }
     }
   }
